@@ -1,6 +1,5 @@
 package com.song.kb.controller;
 
-import com.song.kb.pojo.Test1;
 import com.song.kb.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/hello")
+@RequestMapping("/kb")
 public class TestController {
 
     @Autowired
-    private TestService testService;
+    private TestService demoService;
 
     @GetMapping("/world")
     public String hello() {
@@ -25,8 +24,6 @@ public class TestController {
         return "Hello World post: " + name;
     }
 
-    @GetMapping("/test")
-    public Test1 test() {
-        return testService.testById(1);
-    }
+
 }
+
