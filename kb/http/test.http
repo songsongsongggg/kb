@@ -18,3 +18,4 @@ Content-Type: application/x-www-form-urlencoded
 name=songsong
 
 ###
+GET http://localhost:8081/hello/test
