@@ -1,3 +1,3 @@
 
 ###
-GET http://localhost:8081/kb/ebook?name=p
+GET http://localhost:8081/kb/ebook?name=入门
