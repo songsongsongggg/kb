@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/kb")
+@RequestMapping("/ebook")
 public class EbookController {
 
     @Autowired
     private EbookService ebookService;
     
 
-    @GetMapping("/ebook")
+    @GetMapping("/list")
     public CommonResp list(EbookReq req){
 
         CommonResp<List<EbookResp>> resp = new CommonResp<>();
