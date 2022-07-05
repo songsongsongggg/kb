@@ -1,6 +1,6 @@
 package com.song.kb.req;
 
-public class EbookReq {
+public class EbookReq extends PageReq{
 
     private Long id;
 

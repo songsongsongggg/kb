@@ -8,6 +8,7 @@ import com.song.kb.domain.EbookExample;
 import com.song.kb.mapper.EbookMapper;
 import com.song.kb.req.EbookReq;
 import com.song.kb.resp.EbookResp;
+import com.song.kb.resp.PageResp;
 import com.song.kb.util.CopyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,17 +24,17 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public List<EbookResp> list(EbookReq req) {
+    public PageResp<EbookResp> list(EbookReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if(!ObjectUtils.isEmpty(req.getName())){
             criteria.andNameLike("%" + req.getName() + "%");
         }
-        PageHelper.startPage(1,3);
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
         LOG.info("总行数：{}",pageInfo.getTotal());
-        LOG.info("总页数：{}",pageInfo.getPageNum());
+//        LOG.info("总页数：{}",pageInfo.getPageNum());
 //        List<EbookResp> respList = new ArrayList<>();
 //        for (Ebook ebook : ebookList) {
 ////            EbookResp ebookResp = new EbookResp();
@@ -43,7 +44,10 @@ public class EbookService {
 //            respList.add(ebookResp);
 //        }
         //列表copy
-        List<EbookResp> respList = CopyUtil.copyList(ebookList, EbookResp.class);
-        return respList;
+        List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
+        PageResp<EbookResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+        return pageResp;
     }
 }
