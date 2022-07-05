@@ -32,6 +32,7 @@ public class EbookService {
         }
         PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
+
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
         LOG.info("总行数：{}",pageInfo.getTotal());
 //        LOG.info("总页数：{}",pageInfo.getPageNum());
@@ -45,9 +46,11 @@ public class EbookService {
 //        }
         //列表copy
         List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
-        PageResp<EbookResp> pageResp = new PageResp<>();
+
+        PageResp<EbookResp> pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(list);
+
         return pageResp;
     }
 }
