@@ -21,7 +21,7 @@
             <!--                文档管理-->
             <!--              </a-button>-->
             <!--            </router-link>-->
-            <a-button type="primary" @click="edit">
+            <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
             <a-button type="danger">
@@ -38,7 +38,23 @@
       :confirm-loading="modalLoading"
       @ok="handleModalOk"
   >
-    <p>test</p>
+    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+      <a-form-item label="封面">
+        <a-input v-model:value="ebook.cover"/>
+      </a-form-item>
+      <a-form-item label="名称">
+        <a-input v-model:value="ebook.name"/>
+      </a-form-item>
+      <a-form-item label="分类一">
+        <a-input v-model:value="ebook.category1Id"/>
+      </a-form-item>
+      <a-form-item label="分类二">
+        <a-input v-model:value="ebook.category2Id"/>
+      </a-form-item>
+      <a-form-item label="描述">
+        <a-input v-model:value="ebook.desc" type="textarea"/>
+      </a-form-item>
+    </a-form>
   </a-modal>
 </template>
 
@@ -101,7 +117,7 @@ export default defineComponent({
       loading.value = true;
       // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
       axios.get("/ebook/list", {
-        params:{
+        params: {
           page: params.page,
           size: params.size
         }
@@ -139,6 +155,7 @@ export default defineComponent({
     /**
      * 数组，[100, 101]对应：前端开发 / Vue
      */
+    const ebook = ref(false);
     const modalVisible = ref(false);
     const modalLoading = ref(false);
     const handleModalOk = () => {
@@ -146,7 +163,7 @@ export default defineComponent({
       setTimeout(() => {
         modalVisible.value = false;
         modalLoading.value = false;
-      },1000);
+      }, 1000);
     };
 
     /**
@@ -154,6 +171,7 @@ export default defineComponent({
      */
     const edit = (record: any) => {
       modalVisible.value = true;
+      ebook.value = record;
     };
 
 
@@ -165,6 +183,7 @@ export default defineComponent({
       handleTableChange,
 
       edit,
+      ebook,
 
       modalVisible,
       modalLoading,
