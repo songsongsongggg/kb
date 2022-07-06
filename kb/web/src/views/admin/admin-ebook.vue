@@ -143,14 +143,6 @@ export default defineComponent({
       });
     };
 
-    onMounted(() => {
-      handleQuery({
-        page: 1,
-        size: pagination.value.pageSize
-
-      });
-    });
-
     // -------- 表单 ---------
     /**
      * 数组，[100, 101]对应：前端开发 / Vue
@@ -160,10 +152,19 @@ export default defineComponent({
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
-      setTimeout(() => {
-        modalVisible.value = false;
-        modalLoading.value = false;
-      }, 1000);
+      axios.post("/ebook/save", ebook.value).then((response) => {
+        const data = response.data; //data = commonResp
+        if (data.success){
+          modalVisible.value = false;
+          modalLoading.value = false;
+
+          //重新加载列表
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          });
+        }
+      });
     };
 
     /**
@@ -174,6 +175,12 @@ export default defineComponent({
       ebook.value = record;
     };
 
+    onMounted(() => {
+      handleQuery({
+        page: 1,
+        size: pagination.value.pageSize
+      });
+    });
 
     return {
       ebooks,

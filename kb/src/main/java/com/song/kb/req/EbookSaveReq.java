@@ -1,6 +1,6 @@
-package com.song.kb.resp;
+package com.song.kb.req;
 
-public class EbookResp {
+public class EbookSaveReq {
     private Long id;
 
     private String name;
