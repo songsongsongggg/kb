@@ -66,7 +66,7 @@ public class EbookService {
     }
 
     /**
-     * 编辑保存或新增
+     * 保存或新增
      * @param req
      */
     public void save(EbookSaveReq req) {
