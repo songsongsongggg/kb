@@ -11,6 +11,7 @@ import com.song.kb.req.EbookSaveReq;
 import com.song.kb.resp.EbookQueryResp;
 import com.song.kb.resp.PageResp;
 import com.song.kb.util.CopyUtil;
+import com.song.kb.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class EbookService {
     private final static Logger LOG = LoggerFactory.getLogger(EbookService.class);
     @Resource
     private EbookMapper ebookMapper;
+
+    @Resource
+    private SnowFlake snowFlake;
 
     /**
      * 分页查询
@@ -69,6 +73,7 @@ public class EbookService {
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
         if (ObjectUtils.isEmpty(req.getId())){
             //新增
+            ebook.setId(snowFlake.nextId());
             ebookMapper.insert(ebook);
         }else {
             //更新
