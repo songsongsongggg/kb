@@ -31,6 +31,9 @@
       <template #cover="{ text: cover }">
         <img v-if="cover" :src="cover" alt="avatar"/>
       </template>
+      <template v-slot:category="{text, record}">
+        <span>{{ getCategoryName(record.category1Id) }} / {{ getCategoryName(record.category2Id) }}</span>
+      </template>
       <template v-slot:action="{ text, record }">
         <a-space size="small">
           <!--            <router-link :to="'/admin/doc?ebookId=' + record.id">-->
@@ -84,10 +87,11 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref} from 'vue';
+import {defineComponent, onMounted, ref,} from 'vue';
 import axios from 'axios';
-import { message } from 'ant-design-vue';
+import {message} from 'ant-design-vue';
 import {Tool} from '@/util/tool';
+import defaultResult from "ant-design-vue/es/_util/isMobile";
 
 export default defineComponent({
   name: 'AdminEbook',
@@ -114,12 +118,7 @@ export default defineComponent({
       },
       {
         title: '分类一',
-        key: 'category1Id',
-        dataIndex: 'category1Id'
-      },
-      {
-        title: '分类二',
-        dataIndex: 'category1Id'
+        slots: {customRender: 'category'}
       },
       {
         title: '文档数',
@@ -154,13 +153,13 @@ export default defineComponent({
       }).then((response) => {
         loading.value = false;
         const data = response.data;
-        if (data.success){
-        ebooks.value = data.content.list;
+        if (data.success) {
+          ebooks.value = data.content.list;
 
-        // 重置分页按钮
-        pagination.value.current = params.page;
-        pagination.value.total = data.content.total;
-        }else{
+          // 重置分页按钮
+          pagination.value.current = params.page;
+          pagination.value.total = data.content.total;
+        } else {
           message.error(data.message);
         }
       });
@@ -187,8 +186,9 @@ export default defineComponent({
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
-      ebook.value.category1ds = categoryIds.value[0];
-      ebook.value.category2ds = categoryIds.value[1];
+      ebook.value.category1Id = categoryIds.value[0];
+      ebook.value.category2Id = categoryIds.value[1];
+      console.log(ebook.value)
       axios.post("/ebook/save", ebook.value).then((response) => {
         modalLoading.value = false;
         const data = response.data; //data = commonResp
@@ -200,7 +200,7 @@ export default defineComponent({
             page: pagination.value.current,
             size: pagination.value.pageSize
           });
-        }else {
+        } else {
           message.error(data.message);
         }
       });
@@ -212,7 +212,7 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       ebook.value = Tool.copy(record);
-      categoryIds.value = [ebook.value.category1ds,ebook.value.category2ds]
+      categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
     };
 
     /**
@@ -239,7 +239,7 @@ export default defineComponent({
       });
     };
 
-    const level1 =  ref();
+    const level1 = ref();
     let categorys: any;
     /**
      * 查询所有分类
@@ -268,6 +268,19 @@ export default defineComponent({
       });
     };
 
+    const getCategoryName = (cid: number) => {
+      // console.log(cid)
+      let result = "";
+      categorys.forEach((item: any) => {
+        if (item.id === cid) {
+          // return item.name; // 注意，这里直接return不起作用
+          result = item.name;
+        }
+      });
+      return result;
+    };
+
+
     onMounted(() => {
       handleQueryCategory();
       handleQuery({
@@ -284,6 +297,7 @@ export default defineComponent({
       loading,
       handleTableChange,
       handleQuery,
+      getCategoryName,
 
       edit,
       add,
