@@ -100,31 +100,41 @@ export default defineComponent({
       });
     };
 
-    const isShowWelcome = ref(true);
-
-    const handleClick = (value: any) => {
-      console.log("menu click",value);
-      // if (value.key === 'welcome') {
-      //   isShowWelcome.value = true;
-      // } else {
-      //   isShowWelcome.value = false;
-      // }
-      isShowWelcome.value = value.key === 'welcome';
-    };
-
-    onMounted(() => {
-      handleQueryCategory();
+    const handleQueryEbook = () => {
       axios.get("/ebook/list", {
         params: {
           page: 1,
-          size: 1000
+          size: 1000,
+          category2Id: category2Id
         }
       }).then((response) => {
         const data = response.data;
         ebooks.value = data.content.list;
         // ebooks1.books = data.content;
       });
-    })
+    };
+
+    const isShowWelcome = ref(true);
+    let category2Id = 0;
+
+    const handleClick = (value: any) => {
+      // console.log("menu click", value);
+      if (value.key === 'welcome') {
+        isShowWelcome.value = true;
+      } else {
+        category2Id = value.key
+        isShowWelcome.value = false;
+        handleQueryEbook();
+      }
+      // isShowWelcome.value = value.key === 'welcome';
+    };
+
+
+    onMounted(() => {
+      handleQueryCategory();
+      // handleQueryEbook();
+    });
+
     return {
       ebooks,
       // ebooks2: toRef(ebooks1, "books"),
@@ -135,6 +145,7 @@ export default defineComponent({
         },
         pageSize: 3,
       },
+
       actions: [
         {type: 'StarOutlined', text: '156'},
         {type: 'LikeOutlined', text: '156'},
