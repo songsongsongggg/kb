@@ -1,62 +1,61 @@
+<!--suppress ALL -->
 <template>
-  <a-layout>
-    <a-layout-content
-        :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
+  <a-layout-content
+      :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
+  >
+    <a-form layout="inline" :model="param">
+      <a-form-item>
+        <a-input v-model:value="param.name" placeholder="名称">
+        </a-input>
+      </a-form-item>
+      <a-form-item>
+        <a-button type="primary" @click="handleQuery({page: 1,size: pagination.pageSize})">
+          查询
+        </a-button>
+      </a-form-item>
+      <a-form-item>
+        <a-button type="primary" @click="add()">
+          新增
+        </a-button>
+      </a-form-item>
+    </a-form>
+
+    <a-table
+        :columns="columns"
+        :row-key="record => record.id"
+        :data-source="ebooks"
+        :pagination="pagination"
+        :loading="loading"
+        @change="handleTableChange"
     >
-      <a-form layout="inline" :model="param">
-        <a-form-item>
-          <a-input v-model:value="param.name" placeholder="名称">
-          </a-input>
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" @click="handleQuery({page: 1,size: pagination.pageSize})">
-            查询
+      <template #cover="{ text: cover }">
+        <img v-if="cover" :src="cover" alt="avatar"/>
+      </template>
+      <template v-slot:action="{ text, record }">
+        <a-space size="small">
+          <!--            <router-link :to="'/admin/doc?ebookId=' + record.id">-->
+          <!--              <a-button type="primary">-->
+          <!--                文档管理-->
+          <!--              </a-button>-->
+          <!--            </router-link>-->
+          <a-button type="primary" @click="edit(record)">
+            编辑
           </a-button>
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" @click="add()">
-            新增
-          </a-button>
-        </a-form-item>
-      </a-form>
-
-      <a-table
-          :columns="columns"
-          :row-key="record => record.id"
-          :data-source="ebooks"
-          :pagination="pagination"
-          :loading="loading"
-          @change="handleTableChange"
-      >
-        <template #cover="{ text: cover }">
-          <img v-if="cover" :src="cover" alt="avatar"/>
-        </template>
-        <template v-slot:action="{ text, record }">
-          <a-space size="small">
-            <!--            <router-link :to="'/admin/doc?ebookId=' + record.id">-->
-            <!--              <a-button type="primary">-->
-            <!--                文档管理-->
-            <!--              </a-button>-->
-            <!--            </router-link>-->
-            <a-button type="primary" @click="edit(record)">
-              编辑
+          <a-popconfirm
+              title="删除后不可恢复，确认删除？"
+              ok-text="是"
+              cancel-text="否"
+              @confirm="handleDelete(record.id)"
+          >
+            <a-button type="danger">
+              删除
             </a-button>
-            <a-popconfirm
-                title="删除后不可恢复，确认删除？"
-                ok-text="是"
-                cancel-text="否"
-                @confirm="handleDelete(record.id)"
-            >
-              <a-button type="danger">
-                删除
-              </a-button>
-            </a-popconfirm>
+          </a-popconfirm>
 
-          </a-space>
-        </template>
-      </a-table>
-    </a-layout-content>
-  </a-layout>
+        </a-space>
+      </template>
+    </a-table>
+  </a-layout-content>
   <a-modal
       title="电子书表单"
       v-model:visible="modalVisible"
@@ -70,11 +69,12 @@
       <a-form-item label="名称">
         <a-input v-model:value="ebook.name"/>
       </a-form-item>
-      <a-form-item label="分类一">
-        <a-input v-model:value="ebook.category1Id"/>
-      </a-form-item>
-      <a-form-item label="分类二">
-        <a-input v-model:value="ebook.category2Id"/>
+      <a-form-item label="分类">
+        <a-cascader
+            v-model:value="categoryIds"
+            :field-names="{ label: 'name', value: 'id', children: 'children' }"
+            :options="level1"
+        />
       </a-form-item>
       <a-form-item label="描述">
         <a-input v-model:value="ebook.description" type="textarea"/>
@@ -181,11 +181,14 @@ export default defineComponent({
     /**
      * 数组，[100, 101]对应：前端开发 / Vue
      */
+    const categoryIds = ref();
     const ebook = ref();
     const modalVisible = ref(false);
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
+      ebook.value.category1ds = categoryIds.value[0];
+      ebook.value.category2ds = categoryIds.value[1];
       axios.post("/ebook/save", ebook.value).then((response) => {
         modalLoading.value = false;
         const data = response.data; //data = commonResp
@@ -209,6 +212,7 @@ export default defineComponent({
     const edit = (record: any) => {
       modalVisible.value = true;
       ebook.value = Tool.copy(record);
+      categoryIds.value = [ebook.value.category1ds,ebook.value.category2ds]
     };
 
     /**
@@ -235,7 +239,37 @@ export default defineComponent({
       });
     };
 
+    const level1 =  ref();
+    let categorys: any;
+    /**
+     * 查询所有分类
+     **/
+    const handleQueryCategory = () => {
+      loading.value = true;
+      axios.get("/category/all").then((response) => {
+        loading.value = false;
+        const data = response.data;
+        if (data.success) {
+          categorys = data.content;
+          console.log("原始数组：", categorys);
+
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys, 0);
+          console.log("树形结构：", level1.value);
+
+          // 加载完分类后，再加载电子书，否则如果分类树加载很慢，则电子书渲染会报错
+          handleQuery({
+            page: 1,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
     onMounted(() => {
+      handleQueryCategory();
       handleQuery({
         page: 1,
         size: pagination.value.pageSize
@@ -258,6 +292,8 @@ export default defineComponent({
       modalVisible,
       modalLoading,
       handleModalOk,
+      categoryIds,
+      level1,
 
       handleDelete
 
