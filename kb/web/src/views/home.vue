@@ -4,17 +4,19 @@
       <a-menu
           mode="inline"
           :style="{ height: '100%', borderRight: 0 }"
+          @click="handleClick"
       >
         <a-menu-item key="welcome">
-          <MailOutlined />
+          <MailOutlined/>
           <span>欢迎</span>
         </a-menu-item>
         <a-sub-menu v-for="item in level1" :key="item.id">
           <template v-slot:title>
-              <span><user-outlined/>{{item.name}}</span>
+            <span><user-outlined/>{{ item.name }}</span>
           </template>
           <a-menu-item v-for="child in item.children" :key="child.id">
-            <MailOutlined/><span>{{child.name}}</span>
+            <MailOutlined/>
+            <span>{{ child.name }}</span>
           </a-menu-item>
         </a-sub-menu>
       </a-menu>
@@ -22,7 +24,12 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-list item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3}" :data-source="ebooks">
+
+      <div class="welcome" v-show="isShowWelcome">
+        <h1>欢迎使用木公知识库</h1>
+      </div>
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3}"
+              :data-source="ebooks">
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
             <template #actions>
@@ -77,8 +84,8 @@ export default defineComponent({
      * 查询所有分类
      **/
     const handleQueryCategory = () => {
-       axios.get("/category/all").then((response) => {
-         const data = response.data;
+      axios.get("/category/all").then((response) => {
+        const data = response.data;
         if (data.success) {
           categorys = data.content;
           console.log("原始数组：", categorys);
@@ -93,8 +100,16 @@ export default defineComponent({
       });
     };
 
-    const handleClick = () =>{
-      console.log("menu click");
+    const isShowWelcome = ref(true);
+
+    const handleClick = (value: any) => {
+      console.log("menu click",value);
+      // if (value.key === 'welcome') {
+      //   isShowWelcome.value = true;
+      // } else {
+      //   isShowWelcome.value = false;
+      // }
+      isShowWelcome.value = value.key === 'welcome';
     };
 
     onMounted(() => {
@@ -129,6 +144,7 @@ export default defineComponent({
       handleClick,
       level1,
 
+      isShowWelcome,
     }
   },
 });
