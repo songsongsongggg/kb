@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
+    "@wangeditor/editor-for-vue": "^5.1.12",
     "ant-design-vue": "^2.2.8",
     "axios": "^0.21.0",
     "vue": "^3.2.13",
@@ -28,6 +29,7 @@
     "@vue/eslint-config-typescript": "^9.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "typescript": "~4.5.5"
+    "typescript": "~4.5.5",
+    "wangeditor": "^4.6.3"
   }
 }
