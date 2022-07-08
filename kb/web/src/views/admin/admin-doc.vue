@@ -178,6 +178,7 @@ export default defineComponent({
       });
     };
 
+
     // -------- 表单 ---------
     const doc = ref();
     doc.value = {
@@ -271,11 +272,28 @@ export default defineComponent({
     };
 
     /**
+     * 文档查询
+     **/
+    const handleQueryContent = () => {
+      loading.value = true;
+      axios.get("/doc/find-content/" + doc.value.id).then((response) => {
+        loading.value = false;
+        const data = response.data;
+        if (data.success) {
+          editor.txt.html(data.content);
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    /**
      * 编辑
      */
     const edit = (record: any) => {
       modalVisible.value = true;
       doc.value = Tool.copy(record);
+      handleQueryContent();
 
       //不能选择当前节点及所有子节点，作为父类，会使树断开
       treeSelectData.value = Tool.copy(level1.value);
