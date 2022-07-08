@@ -220,7 +220,9 @@ export default defineComponent({
       }
     };
 
-    const ids: Array<string> = [];
+    const deleteIds: Array<string> = [];
+    const deleteNames: Array<string> = [];
+
     /**
      * 查找整根树枝
      */
@@ -234,7 +236,8 @@ export default defineComponent({
           console.log("disabled", node);
           // 将目标节点设置为disabled
           // node.disabled = true;
-          ids.push(id);
+          deleteIds.push(id);
+          deleteNames.push(node.name);
           // 遍历所有子节点
           const children = node.children;
           if (Tool.isNotEmpty(children)) {
@@ -287,16 +290,19 @@ export default defineComponent({
      * 删除
      */
     const handleDelete = (id: number) => {
+      // 清空数组，否则多次删除时，数组会一直增加
+      deleteIds.length = 0;
+      deleteNames.length = 0;
       getDeleteIds(level1.value, id)
       Modal.confirm({
         title: "重要提醒",
         icon: () => createVNode(ExclamationCircleOutlined),
-        content: () => '再次确认是否删除？',
+        content: () => '将删除：【' + deleteNames.join("，") + "】删除后不可恢复，确认删除？",
         okText: () => '确认',
         okType: 'danger',
         cancelText: () => '取消',
         onOk() {
-          axios.delete("/doc/delete/" + ids.join(",")).then((response) => {
+          axios.delete("/doc/delete/" + deleteIds.join(",")).then((response) => {
             const data = response.data; // data = commonResp
             if (data.success) {
               // 重新加载列表
