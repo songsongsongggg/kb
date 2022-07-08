@@ -179,7 +179,7 @@ export default defineComponent({
     };
 
     // -------- 表单 ---------
-    const doc = ref({});
+    const doc = ref();
     doc.value = {
       ebookId: route.query.ebookId
     };
@@ -190,6 +190,7 @@ export default defineComponent({
 
     const handleSave = () => {
       modalLoading.value = true;
+      doc.value.content = editor.txt.html();
       axios.post("/doc/save", doc.value).then((response) => {
         modalLoading.value = false;
         const data = response.data; //data = commonResp

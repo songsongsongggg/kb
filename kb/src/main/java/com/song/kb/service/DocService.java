@@ -3,8 +3,10 @@ package com.song.kb.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.song.kb.domain.Content;
 import com.song.kb.domain.Doc;
 import com.song.kb.domain.DocExample;
+import com.song.kb.mapper.ContentMapper;
 import com.song.kb.mapper.DocMapper;
 import com.song.kb.req.DocQueryReq;
 import com.song.kb.req.DocSaveReq;
@@ -28,6 +30,9 @@ public class DocService {
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    private ContentMapper contentMapper;
 
     /**
      * 查询所有
@@ -84,13 +89,21 @@ public class DocService {
      */
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
+        Content content = CopyUtil.copy(req, Content.class);
         if (ObjectUtils.isEmpty(req.getId())){
             //新增
             doc.setId(snowFlake.nextId());
             docMapper.insert(doc);
+
+            content.setId(doc.getId());
+            contentMapper.insert(content);
         }else {
             //更新
             docMapper.updateByPrimaryKey(doc);
+            int count = contentMapper.updateByPrimaryKeyWithBLOBs(content);
+            if(count == 0) {
+                contentMapper.insert(content);
+            }
         }
     }
 
