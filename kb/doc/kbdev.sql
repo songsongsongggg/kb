@@ -130,12 +130,13 @@ create table `user`
 (
     `id`         bigint       not null comment 'ID'
         primary key,
-    `login_name` varchar(255) not null comment '登陆名',
-    `name`       varchar(255) comment '昵称',
-    `password`   varchar(255) not null comment '密码',
+    `login_name` varchar(50) not null comment '登陆名',
+    `name`       varchar(50) comment '昵称',
+    `password`   char(32) not null comment '密码',
     unique key `login_name_unique` (`login_name`)
 ) engine = InnoDB
   default charset = utf8mb4 comment ='用户';
+insert into `user` (id, login_name, name, password) values(1,'test','测试','test');
 
 
 
