@@ -40,9 +40,9 @@
             </template>
             <a-list-item-meta :description="item.description">
               <template #title>
-                <fouter-link :to="'/doc?ebookId='+item.id">
+                <router-link :to="'/doc?ebookId='+item.id">
                   {{ item.name }}
-                </fouter-link>
+                </router-link>
               </template>
               <template #avatar>
                 <a-avatar :src="item.cover"/>
