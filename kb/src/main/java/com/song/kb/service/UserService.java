@@ -5,16 +5,19 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.song.kb.domain.User;
 import com.song.kb.domain.UserExample;
+import com.song.kb.exception.BusinessException;
+import com.song.kb.exception.BusinessExceptionCode;
 import com.song.kb.mapper.UserMapper;
 import com.song.kb.req.UserQueryReq;
 import com.song.kb.req.UserSaveReq;
-import com.song.kb.resp.UserQueryResp;
 import com.song.kb.resp.PageResp;
+import com.song.kb.resp.UserQueryResp;
 import com.song.kb.util.CopyUtil;
 import com.song.kb.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -67,15 +70,22 @@ public class UserService {
 
     /**
      * 保存或新增
+     *
      * @param req
      */
     public void save(UserSaveReq req) {
         User user = CopyUtil.copy(req, User.class);
-        if (ObjectUtils.isEmpty(req.getId())){
-            //新增
-            user.setId(snowFlake.nextId());
-            userMapper.insert(user);
-        }else {
+        if (ObjectUtils.isEmpty(req.getId())) {
+            User userDB = selectByLoginName(req.getLoginName());
+            if (ObjectUtils.isEmpty(userDB)){
+                //新增
+                user.setId(snowFlake.nextId());
+                userMapper.insert(user);
+            }else{
+                //用户名已存在
+                throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+            }
+        } else {
             //更新
             userMapper.updateByPrimaryKey(user);
         }
@@ -83,9 +93,23 @@ public class UserService {
 
     /**
      * 删除
+     *
      * @param id
      */
-    public void delete(Long id){
+    public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
     }
+
+    public User selectByLoginName(String loginName) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andLoginNameEqualTo(loginName);
+        List<User> userList = userMapper.selectByExample(userExample);
+        if (CollectionUtils.isEmpty(userList)) {
+            return null;
+        }else{
+            return userList.get(0);
+        }
+    }
+
 }
