@@ -484,7 +484,7 @@ public class DocExample {
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountEqualTo(Integer value) {
+        public Criteria andCoteCountEqualTo(Long value) {
             addCriterion("cote_count =", value, "coteCount");
             return (Criteria) this;
         }
