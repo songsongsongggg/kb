@@ -30,6 +30,7 @@
               :loading="loading"
               :pagination="false"
               size="small"
+
           >
             <template #name="{ text, record }">
               {{ record.sort }} {{ text }}
