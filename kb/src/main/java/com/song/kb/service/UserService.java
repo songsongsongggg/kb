@@ -88,6 +88,7 @@ public class UserService {
         } else {
             //更新
             user.setLoginName(null);//loginName为空时 下面不会执行loginName字段
+            user.setPassword(null);//password
             userMapper.updateByPrimaryKeySelective(user);
         }
     }
