@@ -7,13 +7,13 @@
               v-if="level1.length > 0"
               :tree-data="level1"
               @select="onSelect"
-              :replaceFields="{title:'name',key:'id',value:'id'}"
+              :replaceFields="{title: 'name',key: 'id',value: 'id'}"
               :defaultExpandAll="true"
           >
           </a-tree>
         </a-col>
         <a-col :span="18">
-
+          <div :innerHTML="html"></div>
         </a-col>
       </a-row>
     </a-layout-content>
@@ -33,6 +33,7 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const docs = ref();
+    const html = ref();
 
 
     /**
@@ -67,12 +68,36 @@ export default defineComponent({
       });
     };
 
+    /**
+     * 文档内容查询
+     **/
+    const handleQueryContent = (id :number) => {
+      axios.get("/doc/find-content/" + id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          html.value(data.content);
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    const onSelect = (selectedKeys: any,info: any) => {
+      console.log('selected',selectedKeys,info);
+      if (Tool.isNotEmpty(selectedKeys)){
+        //加载内容
+        handleQueryContent(selectedKeys[0]);
+      }
+    };
+
     onMounted(() => {
       handleQuery();
     });
 
     return {
       level1,
+      html,
+      onSelect,
     }
 
   },

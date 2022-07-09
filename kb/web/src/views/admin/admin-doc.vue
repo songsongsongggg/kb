@@ -30,10 +30,11 @@
               :loading="loading"
               :pagination="false"
               size="small"
-
+              :defaultExpandAllRows="true"
           >
+<!--            v-if="level1.length > 0"-->
             <template #name="{ text, record }">
-              {{ record.sort }} {{ text }}
+              {{record.sort}} {{text}}
             </template>
             <template v-slot:action="{ text, record }">
               <a-space size="small">
@@ -41,7 +42,7 @@
                   编辑
                 </a-button>
                 <a-popconfirm
-                    title="删除后不可恢复，确认删除？"
+                    title="删除后不可恢复，确认删除?"
                     ok-text="是"
                     cancel-text="否"
                     @confirm="handleDelete(record.id)"
@@ -50,7 +51,6 @@
                     删除
                   </a-button>
                 </a-popconfirm>
-
               </a-space>
             </template>
           </a-table>
@@ -279,7 +279,7 @@ export default defineComponent({
     };
 
     /**
-     * 文档查询
+     * 文档内容查询
      **/
     const handleQueryContent = () => {
       loading.value = true;
