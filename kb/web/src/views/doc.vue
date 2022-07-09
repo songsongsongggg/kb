@@ -12,7 +12,7 @@
           >
           </a-tree>
         </a-col>
-        <a-col :span="18" >
+        <a-col :span="18">
           <div class="wangeditor" :innerHTML="html"></div>
         </a-col>
       </a-row>
@@ -55,7 +55,7 @@ export default defineComponent({
      * 数据查询
      **/
     const handleQuery = () => {
-      axios.get("/doc/all/"+ route.query.ebookId ).then((response) => {
+      axios.get("/doc/all/" + route.query.ebookId).then((response) => {
         const data = response.data;
         if (data.success) {
           docs.value = data.content;
@@ -71,7 +71,7 @@ export default defineComponent({
     /**
      * 文档内容查询
      **/
-    const handleQueryContent = (id :number) => {
+    const handleQueryContent = (id: number) => {
       axios.get("/doc/find-content/" + id).then((response) => {
         const data = response.data;
         if (data.success) {
@@ -82,9 +82,9 @@ export default defineComponent({
       });
     };
 
-    const onSelect = (selectedKeys: any,info: any) => {
-      console.log('selected',selectedKeys,info);
-      if (Tool.isNotEmpty(selectedKeys)){
+    const onSelect = (selectedKeys: any, info: any) => {
+      console.log('selected', selectedKeys, info);
+      if (Tool.isNotEmpty(selectedKeys)) {
         //加载内容
         handleQueryContent(selectedKeys[0]);
       }
@@ -111,12 +111,14 @@ export default defineComponent({
   border-top: 1px solid #ccc;
   border-left: 1px solid #ccc;
 }
+
 .wangeditor table td,
 .wangeditor table th {
   border-bottom: 1px solid #ccc;
   border-right: 1px solid #ccc;
   padding: 3px 5px;
 }
+
 .wangeditor table th {
   border-bottom: 2px solid #ccc;
   text-align: center;
@@ -143,6 +145,7 @@ export default defineComponent({
   padding: 3px 5px;
   margin: 0 3px;
 }
+
 .wangeditor pre code {
   display: block;
 }
@@ -154,10 +157,10 @@ export default defineComponent({
 
 /* 和antdv p冲突，覆盖掉 */
 .wangeditor blockquote p {
-  font-family:"YouYuan";
+  font-family: "YouYuan";
   margin: 20px 10px !important;
   font-size: 16px !important;
-  font-weight:600;
+  font-weight: 600;
 }
 
 /* 点赞 */
