@@ -114,8 +114,15 @@ values (6, 1, 5, '文档2.2.1', 1, 0, 0);
 insert into `doc` (id, ebook_id, parent, name, sort, view_count, cote_count)
 values (7, 1, 5, '文档2.2.2', 2, 0, 0);
 
-
-
+# 文档内容表
+drop table if exists `content`;
+create table `content`
+(
+    id      bigint     not null comment '文档id'
+        primary key,
+    content mediumtext not null comment '内容'
+) engine = InnoDB
+  default charset = utf8mb4 comment ='文档内容';
 
 
 
