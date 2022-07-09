@@ -9,6 +9,7 @@
               @select="onSelect"
               :replaceFields="{title: 'name',key: 'id',value: 'id'}"
               :defaultExpandAll="true"
+              :defaultSelectedKeys="defaultSelectedKeys"
           >
           </a-tree>
         </a-col>
@@ -34,6 +35,8 @@ export default defineComponent({
     const route = useRoute();
     const docs = ref();
     const html = ref();
+    const defaultSelectedKeys = ref();
+    defaultSelectedKeys.value = [];
 
 
     /**
@@ -52,23 +55,6 @@ export default defineComponent({
     level1.value = [];
 
     /**
-     * 数据查询
-     **/
-    const handleQuery = () => {
-      axios.get("/doc/all/" + route.query.ebookId).then((response) => {
-        const data = response.data;
-        if (data.success) {
-          docs.value = data.content;
-
-          level1.value = [];
-          level1.value = Tool.array2Tree(docs.value, 0);
-        } else {
-          message.error(data.message);
-        }
-      });
-    };
-
-    /**
      * 文档内容查询
      **/
     const handleQueryContent = (id: number) => {
@@ -81,6 +67,29 @@ export default defineComponent({
         }
       });
     };
+
+    /**
+     * 数据查询
+     **/
+    const handleQuery = () => {
+      axios.get("/doc/all/" + route.query.ebookId).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          docs.value = data.content;
+
+          level1.value = [];
+          level1.value = Tool.array2Tree(docs.value, 0);
+          if (Tool.isNotEmpty(level1)){
+            defaultSelectedKeys.value = [level1.value[0].id];
+            handleQueryContent(level1.value[0].id);
+          }
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+
 
     const onSelect = (selectedKeys: any, info: any) => {
       console.log('selected', selectedKeys, info);
@@ -98,6 +107,7 @@ export default defineComponent({
       level1,
       html,
       onSelect,
+      defaultSelectedKeys,
     }
 
   },
