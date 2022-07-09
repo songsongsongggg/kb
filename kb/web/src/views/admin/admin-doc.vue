@@ -30,9 +30,9 @@
               :loading="loading"
               :pagination="false"
               size="small"
+              v-if="level1.length > 0"
               :defaultExpandAllRows="true"
           >
-<!--            v-if="level1.length > 0"-->
             <template #name="{ text, record }">
               {{record.sort}} {{text}}
             </template>
@@ -164,6 +164,7 @@ export default defineComponent({
      */
 
     const level1 = ref(); // 一级文档树，children属性就是二级文档
+    level1.value = [];
     /**
      * 数据查询
      **/
