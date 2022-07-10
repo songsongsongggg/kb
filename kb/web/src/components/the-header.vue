@@ -22,21 +22,20 @@
       <a-menu-item key="/about">
         <router-link to="/about">关于我们</router-link>
       </a-menu-item>
-      <a-menu-item key="/about">
-        <a class="login-menu" @click="showLoginModal()">
-          登录
-        </a>
-      </a-menu-item>
+      <a class="login-menu" @click="showLoginModal()">
+        <span>登录</span>
+      </a>
     </a-menu>
+
     <a-modal
         title="用户表单"
-        v-model:visible="lgoinModalVisible"
-        :confirm-loading="lgoinModalLoading"
+        v-model:visible="loginModalVisible"
+        :confirm-loading="loginModalLoading"
         @ok="login"
     >
       <a-form :model="loginUser" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-        <a-form-item label="登陆名">
-          <a-input v-model:value="loginUser.loginName" />
+        <a-form-item label="登录名">
+          <a-input v-model:value="loginUser.loginName"/>
         </a-form-item>
         <a-form-item label="密码">
           <a-input v-model:value="loginUser.password" type="password"/>
@@ -47,8 +46,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent,ref} from 'vue';
+import {defineComponent, ref} from 'vue';
+import axios from 'axios';
+import {message} from 'ant-design-vue';
 
+declare let hexMd5: any;
+declare let KEY: any;
 export default defineComponent({
   name: 'the-header',
   setup() {
@@ -58,19 +61,31 @@ export default defineComponent({
       password: "test",
     });
 
-    const lgoinModalVisible = ref(false);
-    const lgoinModalLoading = ref(false);
-    const showLoginModal = () =>{
-      lgoinModalVisible.value = true;
+    const loginModalVisible = ref(false);
+    const loginModalLoading = ref(false);
+    const showLoginModal = () => {
+      loginModalVisible.value = true;
     }
+
     // 登录
     const login = () => {
-      console.log("登录开始")
+      console.log("开始登录");
+      loginModalLoading.value = true;
+      loginUser.value.password = hexMd5(loginUser.value.password + KEY);
+      axios.post('/user/login', loginUser.value).then((response) => {
+        loginModalLoading.value = false;
+        const data = response.data;
+        if (data.success) {
+          loginModalVisible.value = false;
+          message.success("登录成功！");
+        } else {
+          message.error(data.message);
+        }
+      });
     };
-
     return {
-      lgoinModalVisible,
-      lgoinModalLoading,
+      loginModalVisible,
+      loginModalLoading,
       showLoginModal,
       loginUser,
       login,
@@ -82,9 +97,9 @@ export default defineComponent({
 </script>
 
 <style>
-  .login-menu {
-    float: right;
-    color: white;
-  }
+.login-menu {
+  float: right;
+  color: white;
+}
 </style>
 
