@@ -19,3 +19,19 @@ name=songsong
 
 ###
 GET http://localhost:8081/hello/test
+
+###
+GET /redis/set/{{key}}/{{value}}
+
+
+###
+GET http://localhost:8081/redis/get/201296667734052864
+Accept:  application/json
+
+
+
+
+
+
+
+

@@ -37,9 +37,6 @@ public class UserService {
 
     /**
      * 分页查询
-     *
-     * @param req
-     * @return
      */
     public PageResp<UserQueryResp> list(UserQueryReq req) {
         UserExample userExample = new UserExample();
@@ -52,15 +49,6 @@ public class UserService {
 
         PageInfo<User> pageInfo = new PageInfo<>(userList);
         LOG.info("总行数：{}", pageInfo.getTotal());
-//        LOG.info("总页数：{}",pageInfo.getPageNum());
-//        List<UserQueryResp> respList = new ArrayList<>();
-//        for (User user : userList) {
-////            UserQueryResp userResp = new UserQueryResp();
-////            BeanUtils.copyProperties(user,userResp);
-//            //对象copy
-//            UserQueryResp userResp = CopyUtil.copy(user, UserQueryResp.class);
-//            respList.add(userResp);
-//        }
         //列表copy
         List<UserQueryResp> list = CopyUtil.copyList(userList, UserQueryResp.class);
 
@@ -96,8 +84,6 @@ public class UserService {
 
     /**
      * 删除
-     *
-     * @param id
      */
     public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
@@ -105,8 +91,6 @@ public class UserService {
 
     /**
      * 查询LoginName是否存在
-     * @param loginName
-     * @return
      */
     public User selectByLoginName(String loginName) {
         UserExample userExample = new UserExample();
@@ -137,7 +121,7 @@ public class UserService {
         }else{
             if (userDB.getPassword().equals(req.getPassword())){
                 //登录成功
-                UserLoginResp userLoginResp = CopyUtil.copy(req, UserLoginResp.class);
+                UserLoginResp userLoginResp = CopyUtil.copy(userDB, UserLoginResp.class);
                 return userLoginResp;
             }else{
                 //密码不正确
