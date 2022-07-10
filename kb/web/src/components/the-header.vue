@@ -22,15 +22,69 @@
       <a-menu-item key="/about">
         <router-link to="/about">关于我们</router-link>
       </a-menu-item>
+      <a-menu-item key="/about">
+        <a class="login-menu" @click="showLoginModal()">
+          登录
+        </a>
+      </a-menu-item>
     </a-menu>
+    <a-modal
+        title="用户表单"
+        v-model:visible="lgoinModalVisible"
+        :confirm-loading="lgoinModalLoading"
+        @ok="login"
+    >
+      <a-form :model="loginUser" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+        <a-form-item label="登陆名">
+          <a-input v-model:value="loginUser.loginName" />
+        </a-form-item>
+        <a-form-item label="密码">
+          <a-input v-model:value="loginUser.password" type="password"/>
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </a-layout-header>
 </template>
 
 <script lang="ts">
-  import {defineComponent} from 'vue';
+import {defineComponent,ref} from 'vue';
 
-  export default defineComponent({
-    name: 'the-header',
-  });
+export default defineComponent({
+  name: 'the-header',
+  setup() {
+
+    const loginUser = ref({
+      loginName: "test",
+      password: "test",
+    });
+
+    const lgoinModalVisible = ref(false);
+    const lgoinModalLoading = ref(false);
+    const showLoginModal = () =>{
+      lgoinModalVisible.value = true;
+    }
+    // 登录
+    const login = () => {
+      console.log("登录开始")
+    };
+
+    return {
+      lgoinModalVisible,
+      lgoinModalLoading,
+      showLoginModal,
+      loginUser,
+      login,
+
+    };
+
+  }
+});
 </script>
+
+<style>
+  .login-menu {
+    float: right;
+    color: white;
+  }
+</style>
 
