@@ -8,13 +8,13 @@ public class UserLoginResp {
 
     private String name;
 
-    private Long token;
+    private String token;
 
-    public Long getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(Long token) {
+    public void setToken(String token) {
         this.token = token;
     }
 
