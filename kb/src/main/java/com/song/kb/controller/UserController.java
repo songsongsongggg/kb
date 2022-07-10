@@ -1,10 +1,12 @@
 package com.song.kb.controller;
 
+import com.song.kb.req.UserLoginReq;
 import com.song.kb.req.UserQueryReq;
 import com.song.kb.req.UserResetPasswordReq;
 import com.song.kb.req.UserSaveReq;
 import com.song.kb.resp.CommonResp;
 import com.song.kb.resp.PageResp;
+import com.song.kb.resp.UserLoginResp;
 import com.song.kb.resp.UserQueryResp;
 import com.song.kb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,15 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.resetPassword(req);
+        return resp;
+    }
+
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req){
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        resp.setContent(userLoginResp);
         return resp;
     }
 

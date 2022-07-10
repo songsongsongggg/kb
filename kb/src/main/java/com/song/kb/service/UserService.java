@@ -8,10 +8,12 @@ import com.song.kb.domain.UserExample;
 import com.song.kb.exception.BusinessException;
 import com.song.kb.exception.BusinessExceptionCode;
 import com.song.kb.mapper.UserMapper;
+import com.song.kb.req.UserLoginReq;
 import com.song.kb.req.UserQueryReq;
 import com.song.kb.req.UserResetPasswordReq;
 import com.song.kb.req.UserSaveReq;
 import com.song.kb.resp.PageResp;
+import com.song.kb.resp.UserLoginResp;
 import com.song.kb.resp.UserQueryResp;
 import com.song.kb.util.CopyUtil;
 import com.song.kb.util.SnowFlake;
@@ -101,6 +103,11 @@ public class UserService {
         userMapper.deleteByPrimaryKey(id);
     }
 
+    /**
+     * 查询LoginName是否存在
+     * @param loginName
+     * @return
+     */
     public User selectByLoginName(String loginName) {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
@@ -121,4 +128,22 @@ public class UserService {
         userMapper.updateByPrimaryKeySelective(user);
     }
 
+    public UserLoginResp login(UserLoginReq req) {
+        User userDB = selectByLoginName(req.getLoginName());
+        if(ObjectUtils.isEmpty(userDB)){
+            //用户名不存在
+            LOG.info("用户名不存在,{}",req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        }else{
+            if (userDB.getPassword().equals(req.getPassword())){
+                //登录成功
+                UserLoginResp userLoginResp = CopyUtil.copy(req, UserLoginResp.class);
+                return userLoginResp;
+            }else{
+                //密码不正确
+                LOG.info("密码不对,输入密码:{},数据库密码:{}",req.getLoginName(),userDB.getLoginName());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
+    }
 }
