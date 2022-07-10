@@ -9,6 +9,7 @@ import com.song.kb.exception.BusinessException;
 import com.song.kb.exception.BusinessExceptionCode;
 import com.song.kb.mapper.UserMapper;
 import com.song.kb.req.UserQueryReq;
+import com.song.kb.req.UserResetPasswordReq;
 import com.song.kb.req.UserSaveReq;
 import com.song.kb.resp.PageResp;
 import com.song.kb.resp.UserQueryResp;
@@ -70,8 +71,6 @@ public class UserService {
 
     /**
      * 保存或新增
-     *
-     * @param req
      */
     public void save(UserSaveReq req) {
         User user = CopyUtil.copy(req, User.class);
@@ -112,6 +111,14 @@ public class UserService {
         }else{
             return userList.get(0);
         }
+    }
+
+    /**
+     * 修改密码
+     */
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 
 }

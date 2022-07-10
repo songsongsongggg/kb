@@ -1,10 +1,11 @@
 package com.song.kb.controller;
 
 import com.song.kb.req.UserQueryReq;
+import com.song.kb.req.UserResetPasswordReq;
 import com.song.kb.req.UserSaveReq;
 import com.song.kb.resp.CommonResp;
-import com.song.kb.resp.UserQueryResp;
 import com.song.kb.resp.PageResp;
+import com.song.kb.resp.UserQueryResp;
 import com.song.kb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
@@ -42,6 +43,14 @@ public class UserController {
 
         CommonResp resp = new CommonResp<>();
         userService.delete(id);
+        return resp;
+    }
+
+    @PostMapping("/reset-password")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req){
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp resp = new CommonResp<>();
+        userService.resetPassword(req);
         return resp;
     }
 
