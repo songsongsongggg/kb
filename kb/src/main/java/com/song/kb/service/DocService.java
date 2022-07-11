@@ -19,6 +19,7 @@ import com.song.kb.util.CopyUtil;
 import com.song.kb.util.RedisUtil;
 import com.song.kb.util.RequestContext;
 import com.song.kb.util.SnowFlake;
+import com.song.kb.websocket.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,9 @@ public class DocService {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private WebSocketServer webSocketServer;
 
     /**
      * 查询所有
@@ -150,6 +154,11 @@ public class DocService {
         }
     }
 
+    /**
+     * 点赞
+     *
+     * @param id
+     */
     public void vote(Long id) {
         // docMapperCust.increaseVoteCount(id)
         // 远程IP+doc.id作为key,24小时内不能重复
@@ -159,9 +168,14 @@ public class DocService {
         } else {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
         }
+
+        // 推送消息
+        Doc doc = docMapper.selectByPrimaryKey(id);
+        webSocketServer.sendInfo("【" + doc.getName() + "】被点赞!");
+
     }
 
-    public void updateEbookInfo(){
+    public void updateEbookInfo() {
         docMapperCust.updateEbookInfo();
     }
 }
