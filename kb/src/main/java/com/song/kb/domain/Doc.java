@@ -13,7 +13,7 @@ public class Doc {
 
     private Integer viewCount;
 
-    private Integer coteCount;
+    private Integer voteCount;
 
     public Long getId() {
         return id;
@@ -63,12 +63,12 @@ public class Doc {
         this.viewCount = viewCount;
     }
 
-    public Integer getCoteCount() {
-        return coteCount;
+    public Integer getVoteCount() {
+        return voteCount;
     }
 
-    public void setCoteCount(Integer coteCount) {
-        this.coteCount = coteCount;
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Doc {
         sb.append(", name=").append(name);
         sb.append(", sort=").append(sort);
         sb.append(", viewCount=").append(viewCount);
-        sb.append(", coteCount=").append(coteCount);
+        sb.append(", voteCount=").append(voteCount);
         sb.append("]");
         return sb.toString();
     }

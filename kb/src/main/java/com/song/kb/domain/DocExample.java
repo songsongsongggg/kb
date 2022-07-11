@@ -474,63 +474,63 @@ public class DocExample {
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountIsNull() {
-            addCriterion("cote_count is null");
+        public Criteria andVoteCountIsNull() {
+            addCriterion("vote_count is null");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountIsNotNull() {
-            addCriterion("cote_count is not null");
+        public Criteria andVoteCountIsNotNull() {
+            addCriterion("vote_count is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountEqualTo(Long value) {
-            addCriterion("cote_count =", value, "coteCount");
+        public Criteria andVoteCountEqualTo(Integer value) {
+            addCriterion("vote_count =", value, "voteCount");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountNotEqualTo(Integer value) {
-            addCriterion("cote_count <>", value, "coteCount");
+        public Criteria andVoteCountNotEqualTo(Integer value) {
+            addCriterion("vote_count <>", value, "voteCount");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountGreaterThan(Integer value) {
-            addCriterion("cote_count >", value, "coteCount");
+        public Criteria andVoteCountGreaterThan(Integer value) {
+            addCriterion("vote_count >", value, "voteCount");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountGreaterThanOrEqualTo(Integer value) {
-            addCriterion("cote_count >=", value, "coteCount");
+        public Criteria andVoteCountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("vote_count >=", value, "voteCount");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountLessThan(Integer value) {
-            addCriterion("cote_count <", value, "coteCount");
+        public Criteria andVoteCountLessThan(Integer value) {
+            addCriterion("vote_count <", value, "voteCount");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountLessThanOrEqualTo(Integer value) {
-            addCriterion("cote_count <=", value, "coteCount");
+        public Criteria andVoteCountLessThanOrEqualTo(Integer value) {
+            addCriterion("vote_count <=", value, "voteCount");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountIn(List<Integer> values) {
-            addCriterion("cote_count in", values, "coteCount");
+        public Criteria andVoteCountIn(List<Integer> values) {
+            addCriterion("vote_count in", values, "voteCount");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountNotIn(List<Integer> values) {
-            addCriterion("cote_count not in", values, "coteCount");
+        public Criteria andVoteCountNotIn(List<Integer> values) {
+            addCriterion("vote_count not in", values, "voteCount");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountBetween(Integer value1, Integer value2) {
-            addCriterion("cote_count between", value1, value2, "coteCount");
+        public Criteria andVoteCountBetween(Integer value1, Integer value2) {
+            addCriterion("vote_count between", value1, value2, "voteCount");
             return (Criteria) this;
         }
 
-        public Criteria andCoteCountNotBetween(Integer value1, Integer value2) {
-            addCriterion("cote_count not between", value1, value2, "coteCount");
+        public Criteria andVoteCountNotBetween(Integer value1, Integer value2) {
+            addCriterion("vote_count not between", value1, value2, "voteCount");
             return (Criteria) this;
         }
     }

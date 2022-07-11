@@ -8,6 +8,7 @@ import com.song.kb.domain.Doc;
 import com.song.kb.domain.DocExample;
 import com.song.kb.mapper.ContentMapper;
 import com.song.kb.mapper.DocMapper;
+import com.song.kb.mapper.DocMapperCust;
 import com.song.kb.req.DocQueryReq;
 import com.song.kb.req.DocSaveReq;
 import com.song.kb.resp.DocQueryResp;
@@ -33,6 +34,9 @@ public class DocService {
 
     @Resource
     private ContentMapper contentMapper;
+
+    @Resource
+    private DocMapperCust docMapperCust;
 
     /**
      * 查询所有
@@ -94,6 +98,8 @@ public class DocService {
         if (ObjectUtils.isEmpty(req.getId())){
             //新增
             doc.setId(snowFlake.nextId());
+            doc.setVoteCount(0);
+            doc.setViewCount(0);
             docMapper.insert(doc);
 
             content.setId(doc.getId());
@@ -127,7 +133,7 @@ public class DocService {
 
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
-        LOG.info(String.valueOf(content));
+        docMapperCust.increaseViewCount(id);
         if (ObjectUtils.isEmpty(content)) {
             return "";
         }else{
