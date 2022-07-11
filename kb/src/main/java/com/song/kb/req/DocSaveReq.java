@@ -19,7 +19,7 @@ public class DocSaveReq {
 
     private Integer viewCount;
 
-    private Integer coteCount;
+    private Integer voteCount;
 
     @NotNull(message = "【内容】不能为空")
     private String content;
@@ -81,11 +81,11 @@ public class DocSaveReq {
     }
 
     public Integer getCoteCount() {
-        return coteCount;
+        return voteCount;
     }
 
-    public void setCoteCount(Integer coteCount) {
-        this.coteCount = coteCount;
+    public void setCoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class DocSaveReq {
         sb.append(", name=").append(name);
         sb.append(", sort=").append(sort);
         sb.append(", viewCount=").append(viewCount);
-        sb.append(", coteCount=").append(coteCount);
+        sb.append(", voteCount=").append(voteCount);
         sb.append("]");
         return sb.toString();
     }

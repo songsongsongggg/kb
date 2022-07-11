@@ -48,7 +48,7 @@ public class DocService {
         docExample.createCriteria().andEbookIdEqualTo(ebookId);
         docExample.setOrderByClause("sort asc");
         List<Doc> docList = docMapper.selectByExample(docExample);
-
+        LOG.info("doc封装：{}",docList);
         //列表copy
         List<DocQueryResp> list = CopyUtil.copyList(docList, DocQueryResp.class);
 
