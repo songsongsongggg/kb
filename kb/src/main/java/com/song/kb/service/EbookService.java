@@ -76,6 +76,9 @@ public class EbookService {
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
         if (ObjectUtils.isEmpty(req.getId())){
             //新增
+            ebook.setDocCount(0);
+            ebook.setViewCount(0);
+            ebook.setVoteCount(0);
             ebook.setId(snowFlake.nextId());
             ebookMapper.insert(ebook);
         }else {

@@ -42,6 +42,9 @@ public class DocService {
     @Resource
     private DocMapperCust docMapperCust;
 
+    @Resource
+    private RedisUtil redisUtil;
+
     /**
      * 查询所有
      *
@@ -151,7 +154,7 @@ public class DocService {
         // docMapperCust.increaseVoteCount(id)
         // 远程IP+doc.id作为key,24小时内不能重复
         String ip = RequestContext.getRemoteAddr();
-        if (RedisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3600 * 24)) {
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3600 * 24)) {
             docMapperCust.increaseVoteCount(id);
         } else {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
