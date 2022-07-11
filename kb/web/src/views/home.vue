@@ -86,7 +86,7 @@ export default defineComponent({
   name: 'Home',
   setup() {
     const ebooks = ref();
-    const ebooks1 = reactive({books: []});
+    // const ebooks1 = reactive({books: []});
 
     const level1 = ref();
     let categorys: any;
