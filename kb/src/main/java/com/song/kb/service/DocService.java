@@ -19,7 +19,6 @@ import com.song.kb.util.CopyUtil;
 import com.song.kb.util.RedisUtil;
 import com.song.kb.util.RequestContext;
 import com.song.kb.util.SnowFlake;
-import com.song.kb.websocket.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -47,7 +46,7 @@ public class DocService {
     private RedisUtil redisUtil;
 
     @Resource
-    private WebSocketServer webSocketServer;
+    private WsService wsService;
 
     /**
      * 查询所有
@@ -171,7 +170,7 @@ public class DocService {
 
         // 推送消息
         Doc doc = docMapper.selectByPrimaryKey(id);
-        webSocketServer.sendInfo("【" + doc.getName() + "】被点赞!");
+        wsService.sendInfo("【" + doc.getName() + "】被点赞!");
 
     }
 
