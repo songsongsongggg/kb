@@ -6,6 +6,8 @@ import com.github.pagehelper.PageInfo;
 import com.song.kb.domain.Content;
 import com.song.kb.domain.Doc;
 import com.song.kb.domain.DocExample;
+import com.song.kb.exception.BusinessException;
+import com.song.kb.exception.BusinessExceptionCode;
 import com.song.kb.mapper.ContentMapper;
 import com.song.kb.mapper.DocMapper;
 import com.song.kb.mapper.DocMapperCust;
@@ -14,6 +16,8 @@ import com.song.kb.req.DocSaveReq;
 import com.song.kb.resp.DocQueryResp;
 import com.song.kb.resp.PageResp;
 import com.song.kb.util.CopyUtil;
+import com.song.kb.util.RedisUtil;
+import com.song.kb.util.RequestContext;
 import com.song.kb.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,12 +52,13 @@ public class DocService {
         docExample.createCriteria().andEbookIdEqualTo(ebookId);
         docExample.setOrderByClause("sort asc");
         List<Doc> docList = docMapper.selectByExample(docExample);
-        LOG.info("doc封装：{}",docList);
+        LOG.info("doc封装：{}", docList);
         //列表copy
         List<DocQueryResp> list = CopyUtil.copyList(docList, DocQueryResp.class);
 
         return list;
     }
+
     /**
      * 分页查询
      *
@@ -90,12 +95,13 @@ public class DocService {
 
     /**
      * 保存或新增
+     *
      * @param req
      */
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
         Content content = CopyUtil.copy(req, Content.class);
-        if (ObjectUtils.isEmpty(req.getId())){
+        if (ObjectUtils.isEmpty(req.getId())) {
             //新增
             doc.setId(snowFlake.nextId());
             doc.setVoteCount(0);
@@ -104,11 +110,11 @@ public class DocService {
 
             content.setId(doc.getId());
             contentMapper.insert(content);
-        }else {
+        } else {
             //更新
             docMapper.updateByPrimaryKey(doc);
             int count = contentMapper.updateByPrimaryKeyWithBLOBs(content);
-            if(count == 0) {
+            if (count == 0) {
                 contentMapper.insert(content);
             }
         }
@@ -117,14 +123,14 @@ public class DocService {
     /**
      * 删除
      */
-    public void delete(Long id){
+    public void delete(Long id) {
         docMapper.deleteByPrimaryKey(id);
     }
 
     /**
      * 删除
      */
-    public void delete(List<String> ids){
+    public void delete(List<String> ids) {
         DocExample docExample = new DocExample();
         DocExample.Criteria criteria = docExample.createCriteria();
         criteria.andIdIn(ids);
@@ -136,12 +142,19 @@ public class DocService {
         docMapperCust.increaseViewCount(id);
         if (ObjectUtils.isEmpty(content)) {
             return "";
-        }else{
+        } else {
             return content.getContent();
         }
     }
 
     public void vote(Long id) {
-        docMapperCust.increaseVoteCount(id);
+        // docMapperCust.increaseVoteCount(id)
+        // 远程IP+doc.id作为key,24小时内不能重复
+        String ip = RequestContext.getRemoteAddr();
+        if (RedisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3600 * 24)) {
+            docMapperCust.increaseVoteCount(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
     }
 }
