@@ -19,7 +19,6 @@ import com.song.kb.util.CopyUtil;
 import com.song.kb.util.RedisUtil;
 import com.song.kb.util.RequestContext;
 import com.song.kb.util.SnowFlake;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -51,8 +50,8 @@ public class DocService {
     @Resource
     private WsService wsService;
 
-    @Resource
-    private RocketMQTemplate rocketMQTemplate;
+//    @Resource
+//    private RocketMQTemplate rocketMQTemplate;
 
     /**
      * 查询所有
@@ -179,9 +178,9 @@ public class DocService {
         // 异步化
         Doc doc = docMapper.selectByPrimaryKey(id);
         String logId = MDC.get("LOG_ID");// 日志流水号
-//        wsService.sendInfo("【" + doc.getName() + "】被点赞!",logId);
+        wsService.sendInfo("【" + doc.getName() + "】被点赞!",logId);
         // RocketMQ
-        rocketMQTemplate.convertAndSend("VOTE_TOPIC","【" + doc.getName() + "】被点赞!");
+//        rocketMQTemplate.convertAndSend("VOTE_TOPIC","【" + doc.getName() + "】被点赞!");
     }
 
     public void updateEbookInfo() {
