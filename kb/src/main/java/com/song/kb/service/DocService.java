@@ -19,10 +19,10 @@ import com.song.kb.util.CopyUtil;
 import com.song.kb.util.RedisUtil;
 import com.song.kb.util.RequestContext;
 import com.song.kb.util.SnowFlake;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -50,6 +50,9 @@ public class DocService {
 
     @Resource
     private WsService wsService;
+
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
 
     /**
      * 查询所有
@@ -166,16 +169,19 @@ public class DocService {
         // docMapperCust.increaseVoteCount(id)
         // 远程IP+doc.id作为key,24小时内不能重复
         String ip = RequestContext.getRemoteAddr();
-        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3600 * 24)) {
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5)) {
             docMapperCust.increaseVoteCount(id);
         } else {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
         }
 
         // 推送消息
+        // 异步化
         Doc doc = docMapper.selectByPrimaryKey(id);
         String logId = MDC.get("LOG_ID");// 日志流水号
-        wsService.sendInfo("【" + doc.getName() + "】被点赞!",logId);
+//        wsService.sendInfo("【" + doc.getName() + "】被点赞!",logId);
+        // RocketMQ
+        rocketMQTemplate.convertAndSend("VOTE_TOPIC","【" + doc.getName() + "】被点赞!");
     }
 
     public void updateEbookInfo() {
