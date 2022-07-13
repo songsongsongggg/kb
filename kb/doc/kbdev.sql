@@ -128,15 +128,69 @@ create table `content`
 drop table if exists `user`;
 create table `user`
 (
-    `id`         bigint       not null comment 'ID'
+    `id`         bigint      not null comment 'ID'
         primary key,
     `login_name` varchar(50) not null comment '登陆名',
     `name`       varchar(50) comment '昵称',
-    `password`   char(32) not null comment '密码',
+    `password`   char(32)    not null comment '密码',
     unique key `login_name_unique` (`login_name`)
 ) engine = InnoDB
   default charset = utf8mb4 comment ='用户';
-insert into `user` (id, login_name, name, password) values(1,'admin','恩勹','c2e7bfe8681dcc525289bfeafb6ebebb');
+insert into `user` (id, login_name, name, password)
+values (1, 'admin', '恩勹', 'c2e7bfe8681dcc525289bfeafb6ebebb');
+
+# 电子书快照表
+drop table if exists `ebook_snapshot`;
+create table `ebook_snapshot`
+(
+    `id`            bigint auto_increment not null comment 'ID'
+        primary key,
+    `ebook_id`      bigint                not null default 0 comment '电子书id',
+    `date`          date                  not null comment '快照日期',
+    `view_count`    int                   not null default 0 comment '阅读数',
+    `vote_count`    int                   not null default 0 comment '点赞数',
+    `view_increase` int                   not null default 0 comment '阅读增长',
+    `vote_increase` int                   not null default 0 comment '点赞增长',
+    unique key `ebook_id_date_unique` (`ebook_id`, `date`)
+
+) engine = InnoDB
+  default charset = utf8mb4 comment ='电子书快照表';
+
+# 方案一（ID不连续）:
+#     删除今天的数据
+#     为所有电子书生成一条今天的记录
+#     更新阅读总数、点赞总数
+#     更新今日阅读、今日点赞数
+# 方案二（ID连续）:
+#     为所有电子书生成一条今天的记录，如果还没有
+#     更新总阅读数、总点赞数
+#     更新今日阅读数，今日点赞数
+
+insert into `ebook_snapshot`(ebook_id, `date`, view_count, vote_count, view_increase, vote_increase)
+select t1.id, curdate(), 0, 0, 0, 0
+from ebook t1
+where not exists(select 1 from ebook_snapshot t2 where t1.id = t2.ebook_id and t2.`date` = curdate());
+
+#     更新总阅读数、总点赞数
+update ebook_snapshot t1,ebook t2
+set t1.view_count=t2.view_count,
+    t1.vote_count = t2.vote_count
+where t1.ebook_id = t2.id
+  and t1.`date` = curdate();
+
+# 获取昨天数据
+select ebook_id, view_count, vote_count
+from ebook_snapshot
+where `date` = date_sub(curdate(), interval 1 day);
+
+# 更新今日阅读数，今日点赞数
+update ebook_snapshot t1 left join (select ebook_id, view_count, vote_count
+                                    from ebook_snapshot
+                                    where `date` = date_sub(curdate(), interval 1 day)) t2
+    on t1.ebook_id = t2.ebook_id
+set t1.view_increase = (t1.view_count - ifnull(t2.view_count, 0)),
+    t1.vote_increase = (t1.vote_count - ifnull(t2.vote_count, 0))
+where t1.`date` = curdate()
 
 
 
