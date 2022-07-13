@@ -36,10 +36,10 @@
     <!-- 获取首页数值数据：阅读总数、总点赞数、近日阅读数、今日点赞数、今日预计阅读数、今日预计阅读增长-->
     <select id="getStatistic" resultType="com.song.kb.resp.StatisticResp">
         select t1.`date`             as `date`,
-               sum(t1.view_count)    as view_count,
-               sum(t1.vote_count)    as vote_count,
-               sum(t1.view_increase) as view_increase,
-               sum(t1.vote_increase) as vote_increase
+               sum(t1.view_count)    as viewCount,
+               sum(t1.vote_count)    as voteCount,
+               sum(t1.view_increase) as viewIncrease,
+               sum(t1.vote_increase) as voteIncrease
         from ebook_snapshot t1
         where t1.`date` >= date_sub(curdate(), interval 1 day)
         group by t1.`date`
@@ -49,8 +49,8 @@
     <!-- 获取三十天的数值数据：阅读总数、总点赞数、近日阅读数、今日点赞数、今日预计阅读数、今日预计阅读增长-->
     <select id="get30Statistic" resultType="com.song.kb.resp.StatisticResp">
         select t1.`date`             as `date`,
-               sum(t1.view_increase) as view_increase,
-               sum(t1.vote_increase) as vote_increase
+               sum(t1.view_increase) as viewIncrease,
+               sum(t1.vote_increase) as voteIncrease
         from ebook_snapshot t1
         where t1.`date` between date_sub(curdate(), interval 30 day) and date_sub(curdate(), interval 1 day)
         group by t1.`date`
