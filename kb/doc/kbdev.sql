@@ -171,7 +171,7 @@ select t1.id, curdate(), 0, 0, 0, 0
 from ebook t1
 where not exists(select 1 from ebook_snapshot t2 where t1.id = t2.ebook_id and t2.`date` = curdate());
 
-#     更新总阅读数、总点赞数
+# 更新总阅读数、总点赞数
 update ebook_snapshot t1,ebook t2
 set t1.view_count=t2.view_count,
     t1.vote_count = t2.vote_count
@@ -190,7 +190,7 @@ update ebook_snapshot t1 left join (select ebook_id, view_count, vote_count
     on t1.ebook_id = t2.ebook_id
 set t1.view_increase = (t1.view_count - ifnull(t2.view_count, 0)),
     t1.vote_increase = (t1.vote_count - ifnull(t2.vote_count, 0))
-where t1.`date` = curdate()
+where t1.`date` = curdate();
 
 
 
