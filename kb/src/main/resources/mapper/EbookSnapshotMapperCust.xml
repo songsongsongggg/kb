@@ -11,7 +11,7 @@
     <!--    #     为所有电子书生成一条今天的记录，如果还没有-->
     <!--    #     更新总阅读数、总点赞数-->
     <!--    #     更新今日阅读数，今日点赞数-->
-    <update id="genSnapshot">
+    <update id="getSnapshot">
         insert into `ebook_snapshot`(ebook_id, `date`, view_count, vote_count, view_increase, vote_increase)
         select t1.id, curdate(), 0, 0, 0, 0
         from ebook t1
@@ -33,5 +33,17 @@
             t1.vote_increase = (t1.vote_count - ifnull(t2.vote_count, 0))
         where t1.`date` = curdate();
     </update>
+    <!-- 获取首页数值数据：阅读总数、总点赞数、近日阅读数、今日点赞数、今日预计阅读数、今日预计阅读增长-->
+    <select id="getStatistic" resultType="com.song.kb.resp.StatisticResp">
+        select t1.`date`             as `date`,
+               sum(t1.view_count)    as view_count,
+               sum(t1.vote_count)    as vote_count,
+               sum(t1.view_increase) as view_increase,
+               sum(t1.vote_increase) as vote_increase
+        from ebook_snapshot t1
+        where t1.`date` >= date_sub(curdate(), interval 1 day)
+        group by t1.`date`
+        order by t1.`date` asc;
+    </select>
 
 </mapper>
