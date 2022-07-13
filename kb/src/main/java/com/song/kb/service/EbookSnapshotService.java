@@ -3,7 +3,6 @@ package com.song.kb.service;
 import com.song.kb.mapper.EbookSnapshotMapperCust;
 import com.song.kb.resp.StatisticResp;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -19,6 +18,11 @@ public class EbookSnapshotService {
 
     public List<StatisticResp> getStatistic(){
         List<StatisticResp> statistic = ebookSnapshotMapperCust.getStatistic();
+        return statistic;
+    }
+
+    public List<StatisticResp> get30Statistic(){
+        List<StatisticResp> statistic = ebookSnapshotMapperCust.get30Statistic();
         return statistic;
     }
 }

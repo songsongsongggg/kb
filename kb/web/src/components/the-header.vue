@@ -74,8 +74,8 @@
 
       // 用来登录
       const loginUser = ref({
-        loginName: "admin",
-        password: "admin"
+        loginName: "",
+        password: ""
       });
       const loginModalVisible = ref(false);
       const loginModalLoading = ref(false);
