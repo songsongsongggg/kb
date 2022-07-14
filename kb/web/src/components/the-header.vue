@@ -117,7 +117,6 @@ export default defineComponent({
       });
     };
 
-
     return {
       loginModalVisible,
       loginModalLoading,
