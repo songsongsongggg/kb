@@ -93,10 +93,11 @@ export default defineComponent({
         loginModalLoading.value = false;
         const data = response.data;
         if (data.success) {
+          store.commit("setUser", data.content);
+
           loginModalVisible.value = false;
           message.success("登录成功！");
 
-          store.commit("setUser", data.content);
         } else {
           message.error(data.message);
         }
