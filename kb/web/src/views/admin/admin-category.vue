@@ -32,11 +32,6 @@
         </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
-            <!--            <router-link :to="'/admin/doc?categoryId=' + record.id">-->
-            <!--              <a-button type="primary">-->
-            <!--                文档管理-->
-            <!--              </a-button>-->
-            <!--            </router-link>-->
             <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
@@ -50,7 +45,6 @@
                 删除
               </a-button>
             </a-popconfirm>
-
           </a-space>
         </template>
       </a-table>

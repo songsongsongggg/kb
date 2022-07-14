@@ -5,6 +5,7 @@
           mode="inline"
           :style="{ height: '100%', borderRight: 0 }"
           @click="handleClick"
+          :openKeys="openKeys"
       >
         <a-menu-item key="welcome">
           <MailOutlined/>
@@ -24,7 +25,6 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-
       <div class="welcome" v-show="isShowWelcome">
         <the-welcome></the-welcome>
       </div>
@@ -90,17 +90,25 @@ export default defineComponent({
     const ebooks = ref();
     // const ebooks1 = reactive({books: []});
 
+    const openKeys = ref();
     const level1 = ref();
     let categorys: any;
     /**
      * 查询所有分类
      **/
     const handleQueryCategory = () => {
+      level1.value = [];
       axios.get("/category/all").then((response) => {
         const data = response.data;
         if (data.success) {
           categorys = data.content;
           console.log("原始数组：", categorys);
+
+          // 加载完分类后，将侧边栏全部展开
+          openKeys.value = [];
+          for (let i = 0; i < categorys.length; i++) {
+            openKeys.value.push(categorys[i].id)
+          }
 
           level1.value = [];
           level1.value = Tool.array2Tree(categorys, 0);
@@ -166,6 +174,7 @@ export default defineComponent({
 
       handleClick,
       level1,
+      openKeys,
 
       isShowWelcome,
     }
