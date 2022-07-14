@@ -60,7 +60,7 @@ values (302, 300, '进阶方向应用', 302);
 insert into `category` (id, parent, name, sort)
 values (400, 000, '数据库', 400);
 insert into `category` (id, parent, name, sort)
-values (401, 400, 'NySQL', 401);
+values (401, 400, 'MySQL', 401);
 insert into `category` (id, parent, name, sort)
 values (402, 400, 'NoSQL', 402);
 insert into `category` (id, parent, name, sort)
