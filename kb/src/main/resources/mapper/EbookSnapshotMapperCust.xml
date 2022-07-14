@@ -19,7 +19,7 @@
 
         # 更新总阅读数、总点赞数
         update ebook_snapshot t1,ebook t2
-        set t1.view_count=t2.view_count,
+        set t1.view_count = t2.view_count,
             t1.vote_count = t2.vote_count
         where t1.ebook_id = t2.id
           and t1.`date` = curdate();
